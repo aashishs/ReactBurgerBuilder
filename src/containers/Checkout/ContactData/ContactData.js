@@ -7,6 +7,7 @@ import Input from '../../../components/UI/Input/Input';
 import {connect} from 'react-redux';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import * as actions from '../../../store/actions/'
+import { updatedObject, checkValidaity } from '../../../shared/utility';
 
 class ContactData extends Component {
     state = {
@@ -116,37 +117,17 @@ class ContactData extends Component {
         this.props.onOrderBurger(data, this.props.token);
     }
 
-    checkValidaity (value, rules) {
-        let isValid = true;
-        if(!rules) {
-            return true;
-        }
-        
-        if(rules.required) {
-            isValid = value.trim() !== '' && isValid
-        }
-
-        if(rules.minLength) {
-            isValid = value.trim().length >= rules.minLength && isValid
-        }
-
-        if(rules.maxLength) {
-            isValid = value.trim().length <= rules.maxLength && isValid
-        }
-
-        return isValid;
-    }
-
     inputChangedHandler = (event, inputIdentifier) => {
-        console.log(event.target.value, inputIdentifier);
-        const updatedOrdeform = {
-            ...this.state.orderForm
-        };
-        const updatedFormElement = { ...updatedOrdeform[inputIdentifier] };
-        updatedFormElement.value = event.target.value;
-        updatedFormElement.touched = true;
-        updatedFormElement.valid = this.checkValidaity(updatedFormElement.value, updatedFormElement.validation)
-        updatedOrdeform[inputIdentifier] = updatedFormElement;
+        //console.log(event.target.value, inputIdentifier);
+        const updatedFormElement = updatedObject(this.state.orderForm[inputIdentifier],{ 
+            value: event.target.value,
+            touched: true,
+            valid: checkValidaity(event.target.value, this.state.orderForm[inputIdentifier].validation)
+        });
+
+        const updatedOrdeform = updatedObject(this.state.orderForm, {
+            [inputIdentifier]: updatedFormElement
+        });
         
         let formIsValid = true;
         for(let inputIdentifier in updatedOrdeform) {

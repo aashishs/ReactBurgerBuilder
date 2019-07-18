@@ -9,7 +9,7 @@ class Modal extends Component {
     }
 
     componentWillUpdate () {
-        console.log("Updated Modal order summary...");
+        //console.log("Updated Modal order summary...");
     }
 
     render () {

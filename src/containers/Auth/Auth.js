@@ -7,6 +7,7 @@ import Input from '../../components/UI/Input/Input';
 import * as actions from '../../store/actions/'
 import {connect} from 'react-redux';
 import {Redirect} from 'react-router-dom';
+import { updatedObject, checkValidaity } from '../../shared/utility';
 
 class Auth extends Component {
     state = {
@@ -50,38 +51,14 @@ class Auth extends Component {
 
     }
 
-    checkValidaity (value, rules) {
-        let isValid = true;
-        if(!rules) {
-            return true;
-        }
-        
-        if(rules.required) {
-            isValid = value.trim() !== '' && isValid
-        }
-
-        if(rules.minLength) {
-            isValid = value.trim().length >= rules.minLength && isValid
-        }
-
-        if(rules.maxLength) {
-            isValid = value.trim().length <= rules.maxLength && isValid
-        }
-
-        return isValid;
-    }
-
     inputChangedHandler = (event, inputIdentifier) => {
-        const updatedControls = {
-            ...this.state.controls,
-            [inputIdentifier]: {
-                ...this.state.controls[inputIdentifier],
+        const updatedControls = updatedObject(this.state.controls, {
+            [inputIdentifier]: updatedObject(this.state.controls[inputIdentifier],{
                 value: event.target.value,
-                valid: this.checkValidaity(event.target.value, this.state.controls[inputIdentifier].validation),
+                valid: checkValidaity(event.target.value, this.state.controls[inputIdentifier].validation),
                 touched: true
-            }
-        };
-
+            })
+        });
         this.setState({controls: updatedControls})
     }
 
